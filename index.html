@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AutoNova AI Online</title>
+<meta name="description" content="دستیار رایگان عیب‌یابی اولیه خودرو">
+<style>
+:root{--bg:#07101f;--card:#111827;--line:#334155;--text:#fff;--muted:#aab4cc;--accent:#38bdf8;--user:#2563eb;--bot:#1f2937}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#07101f,#0f172a);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,Tahoma,Arial,sans-serif}
+.app{max-width:780px;margin:auto;min-height:100vh;padding:14px 14px 155px}
+.header{background:rgba(17,24,39,.9);border:1px solid var(--line);border-radius:20px;padding:15px}
+h1{margin:0 0 6px;font-size:23px}
+p{margin:0;color:var(--muted);line-height:1.8;font-size:14px}
+.quick{display:flex;gap:8px;overflow:auto;margin:13px 0}
+.quick button{min-width:max-content;background:#0f172a;color:#fff;border:1px solid var(--line);border-radius:999px;padding:10px 13px}
+.msg{padding:12px 14px;margin:10px 0;border-radius:17px;line-height:1.85;white-space:pre-wrap;font-size:15px}
+.bot{background:var(--bot);border:1px solid var(--line);margin-left:25px}
+.user{background:var(--user);margin-right:25px}
+.bottom{position:fixed;left:0;right:0;bottom:0;background:#0b1020;border-top:1px solid var(--line);padding:10px}
+.form{max-width:780px;margin:auto;display:flex;gap:8px}
+input{flex:1;height:54px;border-radius:15px;border:1px solid #475569;background:#020617;color:white;padding:0 12px;font-size:16px}
+#send{width:82px;border:0;border-radius:15px;background:var(--accent);font-weight:800;color:#00111f;font-size:16px}
+.note{text-align:center;color:#94a3b8;font-size:12px;margin-top:7px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>🚗 AutoNova AI</h1>
+    <p>نسخه آنلاین رایگان دستیار عیب‌یابی اولیه خودرو. علائم ماشین را بنویس و جواب بگیر.</p>
+  </div>
+
+  <div class="quick">
+    <button data-q="۲۰۶ SD V8 درجا میلرزه چراغ چک روشن نیست">لرزش درجا</button>
+    <button data-q="دور موتور از ۰.۸ تا ۱ بالا پایین میشه">نوسان دور موتور</button>
+    <button data-q="ماشین شتاب نداره">شتاب کم</button>
+    <button data-q="مصرف بنزین زیاد شده">مصرف زیاد</button>
+    <button data-q="با کولر ماشین میلرزه">لرزش با کولر</button>
+    <button data-q="ریمپ کنم بهتر میشه؟">ریمپ</button>
+  </div>
+
+  <div id="chat"></div>
+</div>
+
+<div class="bottom">
+  <div class="form">
+    <input id="text" placeholder="مثلاً: ماشین درجا میلرزه..." autocomplete="off">
+    <button id="send">ارسال</button>
+  </div>
+  <div class="note">این ابزار تشخیص قطعی نیست؛ برای مشکل جدی دیاگ و مکانیک لازم است.</div>
+</div>
+
+<script>
+const chat=document.getElementById("chat"), text=document.getElementById("text"), sendBtn=document.getElementById("send");
+function add(m,c){const d=document.createElement("div");d.className="msg "+c;d.innerText=m;chat.appendChild(d);window.scrollTo(0,document.body.scrollHeight)}
+function has(t,a){return a.some(x=>t.includes(x))}
+function ans(v){
+ let t=v.replace(/ي/g,"ی").replace(/ك/g,"ک").toLowerCase(), r=[];
+ if(has(t,["لرزش","میلرزه","ریپ","پر پر","درجا","بد کار"])){
+  r.push("🔎 احتمال‌های لرزش/پرپر درجا:\n1) نشتی هوا از شلنگ‌ها یا منیفولد\n2) کوئل ضعیف یا سوکت کوئل\n3) انژکتور کثیف\n4) سنسور MAP یا اکسیژن\n5) دریچه گاز یا دور آرام\n6) دسته موتور\n\n✅ اولویت: دیاگ پارامتر زنده ← تست نشتی هوا ← بررسی کوئل و انژکتور");
+ }
+ if(has(t,["دور موتور","بالا پایین","نوسان","۰.۸","0.8"])){
+  r.push("📊 نوسان دور موتور:\nمعمولاً از دریچه گاز، نشتی هوا، MAP، دور آرام یا انژکتور است. حتی اگر چراغ چک روشن نباشد، دیاگ پارامتر زنده کمک می‌کند.");
+ }
+ if(has(t,["شتاب","جون نداره","کشش","کند","گاز نمیخوره"])){
+  r.push("🚀 شتاب کم:\nفیلتر هوا، فیلتر بنزین، فشار بنزین، کوئل، MAP، سنسور اکسیژن، کاتالیزور و کلاچ را چک کن. ریمپ قبل از سالم بودن موتور پیشنهاد نمی‌شود.");
+ }
+ if(has(t,["مصرف","بنزین","سوخت"])){
+  r.push("⛽ مصرف بالا:\nسنسور اکسیژن، فیلتر هوا، شمع/کوئل، انژکتور، باد لاستیک و ترموستات را بررسی کن.\nفرمول مصرف: لیتر ÷ کیلومتر × ۱۰۰");
+ }
+ if(has(t,["کولر","ac","a/c"])){
+  r.push("❄️ لرزش با کولر:\nاگر زیاد است، ممکن است کمپرسور فشار بیاورد یا دور آرام درست جبران نشود. دریچه گاز، MAP، کوئل و انژکتور مهم‌اند.");
+ }
+ if(has(t,["ریمپ","remap"])){
+  r.push("⚙️ ریمپ:\nروی موتور سالم می‌تواند پاسخ گاز و کشش را بهتر کند. ولی اگر ماشین لرزش یا ریپ دارد، اول عیب را حل کن.");
+ }
+ if(r.length===0) r.push("علائم را کامل‌تر بنویس:\nمدل ماشین + مشکل + زمان رخ دادن + چراغ چک + قطعاتی که تازه عوض شده.\nمثال: ۲۰۶ SD V8، درجا میلرزه، چراغ چک روشن نیست، شمع تازه عوض شده.");
+ return r.join("\n\n");
+}
+function send(){let v=text.value.trim(); if(!v)return; add(v,"user"); text.value=""; setTimeout(()=>add(ans(v),"bot"),150)}
+sendBtn.onclick=send; text.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();send()}};
+document.querySelectorAll(".quick button").forEach(b=>b.onclick=()=>{text.value=b.dataset.q;send()});
+add("سلام 👋\nمن AutoNova AI هستم. از پایین صفحه تایپ کن و بزن ارسال.", "bot");
+</script>
+</body>
+</html>
